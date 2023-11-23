@@ -1,0 +1,14 @@
+isort
+black
+hydra-core
+torch
+torchvision
+torchaudio
+pytorch-lightning
+matplotlib
+opencv-python
+scikit-image
+torch-summary
+torchinfo
+tensorboardX
+wandb

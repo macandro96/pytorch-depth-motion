@@ -1,0 +1,125 @@
+# Config for training the Depth Motion Learner
+########################################
+
+name: depth_motion  # name of the experiment
+
+mode: training # Can be ['training', 'validation', 'testing']
+pretrained_name: null # path to the visual encoder checkpoint. Mandatory for the validation/test mode
+
+grid:
+  index: -1  # if -1 then use the default config, else use the grid index
+
+dataset_name: KITTI # Can be ['KITTI']
+
+model:
+  motion_burnin_steps: 20000  # number of steps to freeze the motion model
+
+  # depth model config
+  depth_model:
+    pretrained: True
+    use_layernorm: False
+    num_layers: 18
+    layernorm_noise_rampup_steps: 10000
+
+  # motion model config
+  motion_model:
+    input_shape: [128, 416]
+    learn_intrinsics: True  # currently only supports True
+
+  # loss weights
+  loss_weights:
+    depth_supervision: 0.0
+    depth_variance: 0.0
+    depth_smoothing: 0.001
+    rgb_consistency: 1.0
+    depth_consistency: 0.0
+    ssim: 3.0
+    rotation_cycle_consistency: 1e-3
+    translation_cycle_consistency: 5e-2
+    motion_smoothing: 1.0
+    motion_sparsity: 0.2
+
+  optimizer:
+    name: adam # optimizer to use for training. Can be ['adamw', 'adam']
+    lr: 2e-4
+    betas: [0.9, 0.999]
+    weight_decay: 0
+
+    scheduler:
+      name: null  # Can be ['CosineAnnealing', 'Linear', 'StepLR', 'ReduceLROnPlateau']
+
+      # CosineAnnealing and Linear parameters
+      warmup_steps: null
+      warmup_ratio: 0.1
+      min_lr: 1e-5
+
+      # StepLR parameters
+      step_size: 10
+      gamma: 0.1
+
+      # ReduceLROnPlateau
+      factor: 0.8
+      patience: 5
+
+dataset:
+  batch_size: 1
+  num_workers: 1
+  shuffle: true
+  evaluateKITTIFlow: False  # if True, will also evaluate and log EPE on KITTI Flow dataset.
+  kitti_flow_path: ???  # path to the kitti dataset, will be used if the above param is true.
+
+  kitti:
+    path: ???  # path to the dataset
+    img_ext: ".jpg"  # can be .png, .jpg
+    num_scales: 1
+    side: null
+    dedup_threshold: 0  # condition to dedup -> |rgb_{t} - rgb{t+1}| < dedup_threshold
+    stride: 1  # stride while sampling images
+  
+trainer:
+  accelerator: auto
+  devices: auto
+  num_nodes: 1
+  max_epochs: 30
+  check_val_every_n_epoch: 1  # number of evaluations on validation every n epochs
+  strategy: ddp_find_unused_parameters_true
+  accumulate_grad_batches: 1
+  benchmark: true
+  enable_progress_bar: true
+  log_every_n_steps: 50  # Interval of logging
+  enable_checkpointing: true
+  limit_train_batches: 1.0
+  limit_val_batches: 1.0
+  sync_batchnorm: true
+  num_sanity_val_steps: 0
+  enable_model_summary: false  # showing summary via torchinfo separately
+  gradient_clip_val: 10
+
+exp_manager:
+  exp_dir: ???  # path to the directory where the logs and checkpoints will be saved
+  exp_name: ${name}
+
+  logging:
+    mask_flow: false
+    log_image_interval_train: 1000  # number of steps after which image will be logged in train mode
+    log_image_interval_val: 500  # number of steps after which image will be logged when in val mode
+
+  checkpoint_callback_params:
+    monitor: val/loss/dataloader_idx_0
+    save_top_k: 1
+    save_last: true
+
+  create_wandb_logger: false
+  wandb_logger_kwargs:
+    name: ${exp_manager.exp_name}
+    version: null
+    project: null
+    offline: false  # if true, wandb logging will be done offline and would require manual syncing
+    tags: null  # list of tags to assign to the run
+
+hydra:
+  run:
+    dir: ${exp_manager.exp_dir}/${exp_manager.exp_name}
+  sweep:
+    dir: ${hydra.run.dir}
+    subdir: ${hydra.job.num}
