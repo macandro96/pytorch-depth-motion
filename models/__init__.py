@@ -14,7 +14,8 @@ def build_model(model_cfg: Union[DictConfig, str]):
         # Load from checkpoint
         checkpoint = torch.load(model_cfg, map_location="cpu")
         model_cfg = OmegaConf.create(checkpoint["model_config"])
-        motion_burnin_start_step = 40000  # TODO: what if the loaded checkpoint is loaded before 40_000 steps
+
+        motion_burnin_start_step = checkpoint["steps"]
 
     loss_weights = {
         "depth_supervision": model_cfg.loss_weights.depth_supervision,

@@ -347,6 +347,7 @@ class DepthMotionTrainer(pl.LightningModule):
 
     def on_save_checkpoint(self, checkpoint):
         checkpoint["model_config"] = self.model.config
+        checkpoint["steps"] = self.model.steps
 
     def on_before_zero_grad(self, _) -> None:
         # clamp the motion scaler weights
