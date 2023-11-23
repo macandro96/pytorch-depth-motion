@@ -49,7 +49,6 @@ def setup_model(cfg: DictConfig):
             training_module = DepthMotionTrainer.load_from_checkpoint(
                 cfg.pretrained_name,
                 model=build_model(cfg.pretrained_name),
-                auxillary_model_args=cfg.auxillary_model,
                 **cfg.exp_manager.logging,
             )
         else:
