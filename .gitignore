@@ -3,3 +3,4 @@ exp_logs/
 sbatch_logs/
 run.sh
 config-train.yaml
+config-test.yaml
