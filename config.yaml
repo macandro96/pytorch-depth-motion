@@ -6,6 +6,8 @@ name: depth_motion  # name of the experiment
 mode: training # Can be ['training', 'validation', 'testing']
 pretrained_name: null # path to the visual encoder checkpoint. Mandatory for the validation/test mode
 
+# wrote this to use grid search for hyperparameter tuning
+# checkout `grid_search()` in `run.py`
 grid:
   index: -1  # if -1 then use the default config, else use the grid index
 
@@ -95,6 +97,7 @@ trainer:
   enable_model_summary: false  # showing summary via torchinfo separately
   gradient_clip_val: 10
 
+# experiment settings
 exp_manager:
   exp_dir: ???  # path to the directory where the logs and checkpoints will be saved
   exp_name: ${name}
@@ -105,7 +108,7 @@ exp_manager:
     log_image_interval_val: 500  # number of steps after which image will be logged when in val mode
 
   checkpoint_callback_params:
-    monitor: val/loss/dataloader_idx_0
+    monitor: val_loss
     save_top_k: 1
     save_last: true
 
