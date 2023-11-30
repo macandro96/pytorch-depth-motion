@@ -15,7 +15,9 @@ def build_model(model_cfg: Union[DictConfig, str]):
         checkpoint = torch.load(model_cfg, map_location="cpu")
         model_cfg = OmegaConf.create(checkpoint["model_config"])
 
-        motion_burnin_start_step = checkpoint["steps"]
+        motion_burnin_start_step = (
+            checkpoint["steps"] if "steps" in checkpoint else 40000
+        )  # assume that the checkpoint completed 40k steps if steps not found
 
     loss_weights = {
         "depth_supervision": model_cfg.loss_weights.depth_supervision,
