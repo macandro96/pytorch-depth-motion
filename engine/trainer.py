@@ -110,12 +110,7 @@ class DepthMotionTrainer(pl.LightningModule):
             flow_gt = F.interpolate(batch["flow_gt"], size=(image_a.shape[2], image_a.shape[3]), mode="bilinear")
             images_flow_gt = [flow_to_image(flow_gt[random_idx]) / 255.0]
 
-        # gt_b - warped
-        diff_img = [torch.abs(image_a - warped_a)[random_idx]]
-
-        grid_img = make_grid(
-            images_gt + images_motion + images_disp + images_warped + diff_img + images_flow_gt, nrow=2
-        )
+        grid_img = make_grid(images_gt + images_motion + images_disp + images_warped + images_flow_gt, nrow=2)
 
         self.logger.log_image(
             key=f"{mode}/images1",
