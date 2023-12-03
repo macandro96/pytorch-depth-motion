@@ -70,7 +70,8 @@ HYDRA_FULL_ERROR=1 python run.py --config-name config.yaml \
 ```
 
 ## Checkpoints
-Our trained checkpoint can be found here on the drive link.
+Our trained checkpoint can be found on the [drive link](https://drive.google.com/file/d/13c9_M8TniaHrxPrO408pOXxpmslPSQJ6/view?usp=sharing).
+
 
 ## Depth metrics
 The depth metrics are calculated on the KITTI 2015 test dataset. The results are as follows:
@@ -80,6 +81,6 @@ The depth metrics are calculated on the KITTI 2015 test dataset. The results are
 
 ## Acknowledgements
 We borrow a lot of code from the following repositories:
-- (TF implementation)[https://github.com/google-research/google-research/tree/master/depth_and_motion_learning]
-- (Monodepth2)[https://github.com/nianticlabs/monodepth2]
-- (Pytorch Depth from videos in wild)[https://github.com/bolianchen/pytorch_depth_from_videos_in_the_wild]
+- [TF implementation](https://github.com/google-research/google-research/tree/master/depth_and_motion_learning)
+- [Monodepth2](https://github.com/nianticlabs/monodepth2)
+- [Pytorch Depth from videos in wild](https://github.com/bolianchen/pytorch_depth_from_videos_in_the_wild)
